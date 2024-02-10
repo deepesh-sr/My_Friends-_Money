@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Friends Money</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap">
+    <style>
+        body {
+            font-family: 'poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #0f0f0f;
+            color: #fff;
+        }
+
+        form {
+            max-width: 300px;
+            padding: 30px;
+            border: 1px solid #222;
+            border-radius: 8px;
+            background-color: #1f1f1f;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        button {
+            background-color: #ef0606;
+            color: #fff;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: rgb(231, 7, 7);
+        }
+    </style>
+</head>
+<body>
+
+    <form id="loginForm">
+        <h2>My Friends Money</h2>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" placeholder="Enter username" value="testusername" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter password" value="testpassword" required>
+
+        <button type="button" onclick="authenticateAndRedirect()">Login</button>
+    </form>
+
+    <script>
+        function authenticateAndRedirect() {
+            // Perform authentication logic (replace this with server-side authentication)
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            // Example: Check if username and password match
+            if (username === "testusername" && password === "testpassword") {
+                // Authentication successful
+                // Store a simple authentication token (replace with a more secure method)
+                localStorage.setItem('authToken', 'yourAuthToken');
+
+                // Redirect to the dashboard
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('Username and password is incorrect. Please try again.');
+            }
+        }
+    </script>
+
+</body>
+</html>
+
+
+
