@@ -1,0 +1,40 @@
+@compiler >= 6
+
+contract TransactionBetweenFriends =
+
+  record state = {
+      sender: address,
+      receiver: address,
+      itemPrice: int,  // Original price of the item
+      remainingAmount: int,  // Remaining amount to be returned
+      returnDeadline: int,  // Deadline for returning the remaining amount
+      interestRatePerDay: int,  // Special interest rate per day for late payment
+      isCompleted: bool,  // Flag indicating if the transaction is completed
+      collateral: bool  // Flag indicating if collateral is provided
+     }
+     
+  entrypoint init(senderAddress: address, receiverAddress: address, price: int, deadline: int, interestRate: int, hasCollateral: bool) : state =
+    require(senderAddress != receiverAddress, "Sender and receiver addresses must be different")
+    require(price > 0, "Item price must be greater than 0")
+    require(deadline > 0, "Deadline must be greater than 0")
+    require(interestRate >= 0, "Interest rate cannot be negative")
+    { sender = senderAddress, receiver = receiverAddress, itemPrice = price, remainingAmount = price,
+      returnDeadline = deadline, interestRatePerDay = interestRate, isCompleted = false, collateral = hasCollateral }
+
+  stateful entrypoint returnRemainingAmount() =
+    require(!state.isCompleted, "Transaction already completed")
+    require(Call.caller == state.receiver, "Only the receiver can return the remaining amount")
+    require(state.returnDeadline >= Chain.timestamp, "Return deadline has passed")
+    Chain.spend(state.sender, state.remainingAmount)
+    put(state{ isCompleted = true })
+
+  stateful entrypoint calculateAndChargeInterest() =
+    require(!state.isCompleted, "Transaction already completed")
+    require(Chain.timestamp > state.returnDeadline, "Return deadline has not passed yet")
+    let daysPassed = (Chain.timestamp - state.returnDeadline) / 86400  // Calculate the number of days passed
+    let interest = state.interestRatePerDay * daysPassed * state.remainingAmount  // Calculate the interest amount
+    Chain.spend(state.sender, state.remainingAmount + interest)  // Charge the sender the remaining amount plus interest
+    put(state{ isCompleted = true })
+
+  entrypoint getTransactionDetails() : state =
+    state
